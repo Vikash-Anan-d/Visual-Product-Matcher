@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Visual Product Matcher</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9fafb;
+            color: #222;
+        }
+        .app-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 20px auto;
+            gap: 20px;
+            padding: 0 10px;
+            min-height: 80vh;
+        }
+        .sidebar {
+            flex: 1 1 320px;
+            background: #fff;
+            padding: 25px 20px 30px 20px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgb(0 0 0 / 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        .sidebar h2 {
+            margin: 0 0 15px;
+            font-weight: 800;
+            font-size: 2rem;
+            color: #4a4a4a;
+            letter-spacing: 0.03em;
+        }
+        .upload-label {
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        input[type="file"] {
+            border: none;
+            background: #e6e8ff;
+            padding: 10px 16px;
+            border-radius: 24px;
+            color: #5a4fff;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        input[type="file"]:hover {
+            background: #c9ccff;
+        }
+        input[type="text"] {
+            width: 90%;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1.5px solid #ccc;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        input[type="text"]:focus {
+            border-color: #6a4fff;
+            outline: none;
+            box-shadow: 0 0 6px #a29bff88;
+        }
+        .or-text {
+            text-align: center;
+            margin: 12px 0;
+            font-weight: 600;
+            color: #888;
+            font-style: italic;
+        }
+        button.search-btn {
+            background-color: #6a4fff;
+            color: white;
+            border: none;
+            padding: 16px 0;
+            border-radius: 36px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 12px rgb(106 79 255 / 0.5);
+        }
+        button.search-btn:disabled {
+            background-color: #b3aaff;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        button.search-btn:hover:not(:disabled) {
+            background-color: #5639d6;
+            box-shadow: 0 6px 18px rgb(86 57 214 / 0.7);
+        }
+        .uploaded-image-container {
+            margin-top: 15px;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+        }
+        .uploaded-image-container img {
+            width: 100%;
+            display: block;
+            border-radius: 14px;
+        }
+        .filter-container {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .filter-label {
+            font-weight: 600;
+            color: #444;
+            font-size: 0.95rem;
+        }
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 6px;
+            background: #d3d3d3;
+            outline: none;
+            transition: background 0.3s ease;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #6a4fff;
+            cursor: pointer;
+            box-shadow: 0 0 6px #a29bffcc;
+            transition: background-color 0.3s ease;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: #5639d6;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #6a4fff;
+            cursor: pointer;
+            box-shadow: 0 0 6px #a29bffcc;
+            transition: background-color 0.3s ease;
+        }
+        input[type="range"]::-moz-range-thumb:hover {
+            background: #5639d6;
+        }
+        .results-container {
+            flex: 3 1 700px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 22px;
+            padding-bottom: 20px;
+        }
+        .product-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 6px 18px rgb(0 0 0 / 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            cursor: default;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 10px 28px rgb(0 0 0 / 0.15);
+        }
+        .product-image {
+            background-color: #2f3640;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-radius: 16px 16px 0 0;
+            object-fit: cover;
+        }
+        .product-image img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 16px 16px 0 0;
+            object-fit: cover;
+        }
+        .product-info {
+            padding: 18px 24px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .product-name {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin: 0;
+            color: #222;
+        }
+        .product-category {
+            font-size: 0.95rem;
+            color: #888;
+            margin: 0;
+        }
+        .product-similarity {
+            font-weight: 700;
+            font-size: 1rem;
+            margin: 0;
+            color: #222;
+        }
+        .product-description {
+            font-size: 0.9rem;
+            color: #555;
+            margin-top: auto;
+        }
+        #loading {
+            text-align: center;
+            font-style: italic;
+            margin-top: 15px;
+            display: none;
+            color: #6a4fff;
+            font-weight: 600;
+        }
+        #error-message {
+            text-align: center;
+            color: #e74c3c;
+            font-weight: 700;
+            margin-top: 15px;
+            display: none;
+        }
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .app-container {
+                flex-direction: column;
+                max-width: 95%;
+                margin: 15px auto;
+            }
+            .sidebar {
+                width: 100%;
+                flex: none;
+                padding: 20px 15px;
+                border-radius: 12px;
+            }
+            .results-container {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <h2>Visual Product Matcher</h2>
+            <label class="upload-label" for="imageFile">Upload a Product Image:</label>
+            <input type="file" id="imageFile" accept="image/*" />
+            <div class="or-text">- OR -</div>
+            <label class="upload-label" for="imageUrl">Paste an Image URL:</label>
+            <input type="text" id="imageUrl" placeholder="Paste image URL here" />
+            <h3>Your Uploaded Image</h3>
+            <div class="uploaded-image-container" id="uploadedImageContainer"></div>
+            <button class="search-btn" id="searchBtn" onclick="searchImages()">Search for Products</button>
+        </aside>
+        <section class="results-section">
+            <div class="search-bar-container">
+                <label for="similarityFilter" class="filter-label">Filter by Similarity Score:</label>
+                <input type="range" id="similarityFilter" min="0" max="100" value="0" />
+                <span id="filterValue">0%</span>
+            </div>
+            <div class="results-container" id="resultsGrid"></div>
+        </section>
+    </div>
+
+    <div id="loading">Searching...</div>
+    <div id="error-message"></div>
+
+    <script>
+        const imageFile = document.getElementById('imageFile');
+        const imageUrl = document.getElementById('imageUrl');
+        const resultsGrid = document.getElementById('resultsGrid');
+        const loading = document.getElementById('loading');
+        const errorMessage = document.getElementById('error-message');
+        const uploadedImageContainer = document.getElementById('uploadedImageContainer');
+        const similarityFilter = document.getElementById('similarityFilter');
+        const filterValue = document.getElementById('filterValue');
+        const searchBtn = document.getElementById('searchBtn');
+
+        let currentResults = [];
+
+        similarityFilter.addEventListener('input', () => {
+            filterValue.textContent = similarityFilter.value + '%';
+            displayResults(currentResults, similarityFilter.value);
+        });
+
+        async function searchImages() {
+            // Clear previous results and errors
+            resultsGrid.innerHTML = '';
+            errorMessage.style.display = 'none';
+            uploadedImageContainer.innerHTML = '';
+            currentResults = [];
+
+            let formData = new FormData();
+            let isFile = imageFile.files.length > 0;
+            let isUrl = imageUrl.value.trim() !== '';
+
+            if (isFile) {
+                formData.append('file', imageFile.files[0]);
+                displayUploadedImage(URL.createObjectURL(imageFile.files[0]));
+            } else if (isUrl) {
+                formData.append('url', imageUrl.value);
+                displayUploadedImage(imageUrl.value);
+            } else {
+                displayError("Please upload an image file or enter a valid URL.");
+                return;
+            }
+
+            loading.style.display = 'block';
+            searchBtn.disabled = true;
+
+            try {
+                const response = await fetch('/search', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Server error occurred.');
+                }
+
+                const data = await response.json();
+
+                if (data.length === 0) {
+                    displayError("No similar products found.");
+                } else {
+                    currentResults = data;
+                    similarityFilter.value = 0;
+                    filterValue.textContent = '0%';
+                    displayResults(data, 0);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                displayError("An error occurred during the search. Please try again.");
+            } finally {
+                loading.style.display = 'none';
+                searchBtn.disabled = false;
+            }
+        }
+
+        function displayResults(products, minSimilarity = 0) {
+            resultsGrid.innerHTML = '';
+            products
+                .filter(product => product.similarity >= minSimilarity)
+                .forEach(product => {
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+
+                    // Create product image container with fallback text if no image
+                    const imageContainer = document.createElement('div');
+                    imageContainer.className = 'product-image';
+                    if (product.image_url) {
+                        const img = document.createElement('img');
+                        img.src = product.image_url;
+                        img.alt = product.name;
+                        imageContainer.appendChild(img);
+                    } else {
+                        imageContainer.textContent = product.name;
+                    }
+                    // Create product info container
+                    const info = document.createElement('div');
+                    info.className = 'product-info';
+
+                    const name = document.createElement('h3');
+                    name.className = 'product-name';
+                    name.textContent = product.name;
+
+                    const category = document.createElement('p');
+                    category.className = 'product-category';
+                    category.textContent = product.category;
+
+                    const similarity = document.createElement('p');
+                    similarity.className = 'product-similarity';
+                    similarity.textContent = `Similarity: ${Math.round(product.similarity)}%`;
+
+                    const description = document.createElement('p');
+                    description.className = 'product-description';
+                    description.textContent = product.description || '';
+
+                    info.appendChild(name);
+                    info.appendChild(category);
+                    info.appendChild(similarity);
+                    info.appendChild(description);
+
+                    card.appendChild(imageContainer);
+                    card.appendChild(info);
+
+                    resultsGrid.appendChild(card);
+                });
+        }
+
+        function displayError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+
+        function displayUploadedImage(src) {
+            uploadedImageContainer.innerHTML = '';
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = 'Uploaded Image';
+            uploadedImageContainer.appendChild(img);
+        }
+
+        imageFile.addEventListener('change', () => {
+            if (imageFile.files.length > 0) {
+                imageUrl.value = '';
+                displayUploadedImage(URL.createObjectURL(imageFile.files[0]));
+            }
+        });
+
+        imageUrl.addEventListener('input', () => {
+            if (imageUrl.value.trim() !== '') {
+                imageFile.value = '';
+                displayUploadedImage(imageUrl.value);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+:root {
+--bg: #0b0d12;
+--fg: #e8ecf1;
+--muted: #9aa5b1;
+--card: #121622;
+--accent: #3b82f6;
+--danger: #ef4444;
+}
+
+
+* { box-sizing: border-box; }
+body {
+margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+background: var(--bg); color: var(--fg);
+}
+.container { max-width: 1100px; margin: 0 auto; padding: 16px; }
+header h1 { margin: 0 0 8px; }
+header p { color: var(--muted); margin: 0; }
+
+
+.card { background: va
