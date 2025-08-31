@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Flask
 torch
 torchvision
@@ -6,3 +7,13 @@ numpy
 Pillow
 requests
 gunicorn
+=======
+Flask
+torch
+torchvision
+scikit-learn
+numpy
+Pillow
+requests
+gunicorn
+>>>>>>> blackboxai/upload-project
